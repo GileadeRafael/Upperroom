@@ -2,14 +2,22 @@ import { GoogleGenAI, Content } from "@google/genai";
 import { Message, Mode } from '../types';
 import { SYSTEM_INSTRUCTION } from '../constants';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const sendMessageToGemini = async (
   history: Message[],
   currentMessage: string,
   mode: Mode
 ): Promise<string> => {
   try {
+    const apiKey = process.env.API_KEY;
+
+    if (!apiKey) {
+      console.error("API Key not found. Please set API_KEY in your environment variables.");
+      return "Erro de Configuração: API Key não encontrada. Verifique as variáveis de ambiente.";
+    }
+
+    // Initialize the client here to avoid top-level crashes if config is missing
+    const ai = new GoogleGenAI({ apiKey });
+
     // Convert app history to Gemini Content format
     const contents: Content[] = history.map((msg) => ({
       role: msg.role,
