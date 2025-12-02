@@ -8,13 +8,14 @@ export const sendMessageToGemini = async (
   mode: Mode
 ): Promise<string> => {
   try {
-    // The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-    // We assume this variable is pre-configured and accessible.
-    const apiKey = process.env.API_KEY;
+    // FIX: Use import.meta.env.VITE_API_KEY for Vite/Vercel environment.
+    // process.env causes a crash in the browser.
+    // @ts-ignore
+    const apiKey = import.meta.env.VITE_API_KEY;
 
     if (!apiKey) {
       console.error("API KEY MISSING.");
-      return "⚠️ Configuração Necessária\n\nA variável de ambiente API_KEY não foi encontrada.";
+      return "⚠️ Configuração Necessária\n\nA variável de ambiente VITE_API_KEY não foi encontrada. Por favor, configure-a nas configurações do projeto no Vercel (Environment Variables).";
     }
 
     const ai = new GoogleGenAI({ apiKey: apiKey });
@@ -50,6 +51,6 @@ export const sendMessageToGemini = async (
     return "Não foi possível gerar uma resposta no momento.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Houve uma falha na conexão. Verifique se sua API Key é válida e se tem permissão para este domínio.";
+    return "Houve uma falha na conexão. Verifique se sua API Key é válida e se tem permissão para este domínio (configure em Google AI Studio > API Key > Restrictions).";
   }
 };
