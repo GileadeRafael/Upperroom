@@ -8,9 +8,16 @@ export const sendMessageToGemini = async (
   mode: Mode
 ): Promise<string> => {
   try {
-    // Access environment variable directly as per guidelines.
-    // Ensure process.env.API_KEY is accessible in your environment.
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // The API key must be obtained exclusively from the environment variable process.env.API_KEY.
+    // We assume this variable is pre-configured and accessible.
+    const apiKey = process.env.API_KEY;
+
+    if (!apiKey) {
+      console.error("API KEY MISSING.");
+      return "⚠️ Configuração Necessária\n\nA variável de ambiente API_KEY não foi encontrada.";
+    }
+
+    const ai = new GoogleGenAI({ apiKey: apiKey });
 
     // Convert app history to Gemini Content format
     const contents = history.map((msg) => ({
@@ -43,6 +50,6 @@ export const sendMessageToGemini = async (
     return "Não foi possível gerar uma resposta no momento.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Houve uma falha na conexão. Verifique as configurações da API.";
+    return "Houve uma falha na conexão. Verifique se sua API Key é válida e se tem permissão para este domínio.";
   }
 };
