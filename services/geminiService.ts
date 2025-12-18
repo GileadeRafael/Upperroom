@@ -8,8 +8,8 @@ export const sendMessageToGemini = async (
   mode: Mode
 ): Promise<string> => {
   try {
-    // FIX: Use import.meta.env.VITE_API_KEY for Vite/Vercel environment.
-    // process.env causes a crash in the browser.
+    // IMPORTANTE: Para o Vercel/Vite, usamos import.meta.env.
+    // Certifique-se de que a variável no Vercel se chama VITE_API_KEY.
     // @ts-ignore
     const apiKey = import.meta.env.VITE_API_KEY;
 
@@ -36,11 +36,11 @@ export const sendMessageToGemini = async (
     });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash-exp', // Modelo estável e rápido
       contents: contents,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7, // Balance between creativity (Devocional) and precision (Estudo)
+        temperature: 0.7,
       },
     });
 
@@ -51,6 +51,6 @@ export const sendMessageToGemini = async (
     return "Não foi possível gerar uma resposta no momento.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Houve uma falha na conexão. Verifique se sua API Key é válida e se tem permissão para este domínio (configure em Google AI Studio > API Key > Restrictions).";
+    return "Houve uma falha na conexão. Verifique se sua API Key é válida e se as variáveis de ambiente no Vercel estão corretas.";
   }
 };
